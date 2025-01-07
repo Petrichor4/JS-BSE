@@ -22,7 +22,8 @@ const typeDefs = `
     }
 
     type Query {
-        me: User
+        me(username: String): User
+        user: [User]
     }
 
     input BookInput {

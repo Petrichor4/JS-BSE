@@ -7,6 +7,9 @@ const resolvers = {
     Query: {
         me: async (parent, username) => {
             return User.findOne({username}).populate('savedBooks')
+        },
+        user: async () => {
+            return User.find({})
         }
     },
 
@@ -18,7 +21,7 @@ const resolvers = {
                 throw AuthenticationError
             }
 
-            const correctPW = await User.isCorrectPassword(password)
+            const correctPW = await user.isCorrectPassword(password)
 
             if (!correctPW) {
                 throw AuthenticationError
@@ -33,6 +36,7 @@ const resolvers = {
             const user = await User.create({username, email, password});
 
             const token = signToken(user)
+            return { user}
        },
        saveBook: async (parent, criteria) => {
             const savedBook = await User.findOneAndUpdate({})
