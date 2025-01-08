@@ -85,12 +85,9 @@ const SearchBooks = () => {
         bookId: bookToSave.bookId || '',
         image: bookToSave.image || '',
       }
-      console.log(criteria)
-      const { data } = await saveBook({
+      await saveBook({
         variables: { id, criteria }
       })
-
-      console.log(data)
 
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
