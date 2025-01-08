@@ -36,7 +36,8 @@ const resolvers = {
             const user = await User.create({username, email, password});
 
             const token = signToken(user)
-            return { user}
+
+            return { user, token } 
        },
        saveBook: async (parent, criteria) => {
             const savedBook = await User.findOneAndUpdate({})
