@@ -28,3 +28,7 @@ export const removeBookId = (bookId) => {
 
   return true;
 };
+
+export const removeAllBooks = () => {
+  localStorage.removeItem('saved_books');
+};
