@@ -1,12 +1,11 @@
-const { Query } = require('mongoose');
 const { User, Book } = require('../models');
 const { signToken, AuthenticationError } = require('../utils/auth');
 // const { saveBook } = require('../../client/src/utils/API');
 
 const resolvers = {
     Query: {
-        me: async (parent, username) => {
-            return User.findOne({username}).populate('savedBooks')
+        me: async (_, _id) => {
+            return User.findOne({_id}).populate('savedBooks')
         },
         user: async () => {
             return User.find({})
@@ -14,7 +13,7 @@ const resolvers = {
     },
 
     Mutation: {
-       login: async (parent, { email, password }) => {
+       login: async (_, { email, password }) => {
             const user = await User.findOne({ email });
             
             if (!user) {
@@ -32,17 +31,27 @@ const resolvers = {
             return { user, token };
 
        },
-       addUser: async (parent, { username, email, password }) => {
+       addUser: async (_, { username, email, password }) => {
             const user = await User.create({username, email, password});
 
             const token = signToken(user)
 
             return { user, token } 
        },
-       saveBook: async (parent, criteria) => {
-            const savedBook = await User.findOneAndUpdate({})
-       }
+       saveBook: async (_, { _id, criteria }) => {
+            const savedBook = await User.findOneAndUpdate(
+                {_id},
+                {$addToSet: {savedBooks: criteria}},
+                {new: true, runValidators: true}
+            )
+
+            return savedBook
+       },
+         removeBook: async (_, { _id, bookId }) => {
+                const removedBook = await User.findOneAndUpdate({ _id }, { $pull: { savedBooks: { bookId } } }, { new: true });
+                return removedBook;
     }
+  }
 }
 
 module.exports = resolvers;
